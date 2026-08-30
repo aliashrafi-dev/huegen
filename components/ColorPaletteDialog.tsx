@@ -11,32 +11,26 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog"
 
+import type { Palette } from "@/lib/colors"
+
 interface ColorPaletteDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
-  color: string
+  palette: Palette | null
 }
-
-const colors = [
-  "#6366F1",
-  "#818CF8",
-  "#A5B4FC",
-  "#C7D2FE",
-  "#E0E7FF",
-]
 
 export function ColorPaletteDialog({
   open,
   onOpenChange,
-  color,
+  palette,
 }: ColorPaletteDialogProps) {
   const [copied, setCopied] = useState<string | null>(null)
 
-  const copyColor = async (value: string) => {
+  const copyColor = async (id: string, value: string) => {
     try {
       await navigator.clipboard.writeText(value)
 
-      setCopied(value)
+      setCopied(id)
 
       setTimeout(() => {
         setCopied(null)
@@ -46,12 +40,17 @@ export function ColorPaletteDialog({
     }
   }
 
+  if (!palette) return null
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         className="
           w-[calc(100%-2rem)]
           max-w-3xl
+          sm:max-w-3xl
+          max-h-[85vh]
+          overflow-y-auto
           rounded-3xl
           border
           bg-background
@@ -82,7 +81,7 @@ export function ColorPaletteDialog({
               <div
                 className="h-16 w-16 shrink-0 rounded-xl"
                 style={{
-                  backgroundColor: color,
+                  backgroundColor: palette.base.hex,
                 }}
               />
 
@@ -92,7 +91,7 @@ export function ColorPaletteDialog({
                 </p>
 
                 <p className="mt-1 text-lg font-semibold uppercase">
-                  {color}
+                  {palette.base.hex}
                 </p>
               </div>
             </div>
@@ -105,57 +104,64 @@ export function ColorPaletteDialog({
             </p>
 
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
-              {colors.map((item) => (
-                <div
-                  key={item}
-                  className="
-                    overflow-hidden
-                    rounded-2xl
-                    border
-                    bg-card
-                    transition
-                    hover:-translate-y-0.5
-                    hover:shadow-md
-                  "
-                >
-                  {/* Color */}
+              {palette.colors.map((item, index) => {
+                const id = `${item.hex}-${index}`
+
+                return (
                   <div
-                    className="h-28 sm:h-36"
-                    style={{
-                      backgroundColor: item,
-                    }}
-                  />
+                    key={id}
+                    className="
+                      flex h-full
+                      min-w-0
+                      flex-col
+                      overflow-hidden
+                      rounded-2xl
+                      border
+                      bg-card
+                      transition
+                      hover:-translate-y-0.5
+                      hover:shadow-md
+                    "
+                  >
+                    {/* Color */}
+                    <div
+                      className="h-28 w-full shrink-0 sm:h-36"
+                      style={{
+                        backgroundColor: item.hex,
+                      }}
+                    />
 
-                  {/* Info */}
-                  <div className="flex items-center justify-between gap-2 p-3">
-                    <span className="text-xs font-medium uppercase">
-                      {item}
-                    </span>
+                    {/* Info */}
+                    <div className="flex min-w-0 items-center justify-between gap-2 p-3">
+                      <span className="truncate text-xs font-medium uppercase">
+                        {item.hex}
+                      </span>
 
-                    <button
-                      type="button"
-                      onClick={() => copyColor(item)}
-                      className="
-                        flex h-8 w-8
-                        shrink-0
-                        items-center justify-center
-                        rounded-lg
-                        border
-                        bg-background
-                        transition
-                        hover:bg-muted
-                      "
-                      aria-label={`Copy ${item}`}
-                    >
-                      {copied === item ? (
-                        <Check className="h-4 w-4" />
-                      ) : (
-                        <Copy className="h-4 w-4" />
-                      )}
-                    </button>
+                      <button
+                        type="button"
+                        onClick={() => copyColor(id, item.hex)}
+                        className="
+                          flex h-8 w-8
+                          shrink-0
+                          items-center justify-center
+                          rounded-lg
+                          border
+                          bg-background
+                          transition
+                          hover:bg-muted
+                        "
+                        aria-label={`Copy ${item.hex}`}
+                      >
+                        {copied === id ? (
+                          <Check className="h-4 w-4" />
+                        ) : (
+                          <Copy className="h-4 w-4" />
+                        )}
+                      </button>
+                    </div>
                   </div>
-                </div>
-              ))}
+                )
+              })}
             </div>
           </div>
         </div>

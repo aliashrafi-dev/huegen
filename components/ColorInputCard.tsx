@@ -1,12 +1,56 @@
 "use client"
 
 import { useState } from "react"
-import { Palette, ArrowRight } from "lucide-react"
+import { Palette, ArrowRight, Loader2 } from "lucide-react"
 import { ColorPaletteDialog } from "./ColorPaletteDialog"
+import { isValidHex } from "@/lib/colors/validate"
+import type { GeneratePaletteResponse, Palette as ColorPalette } from "@/lib/colors"
 
 export function ColorInputCard() {
   const [color, setColor] = useState("#6366F1")
   const [open, setOpen] = useState(false)
+  const [palette, setPalette] = useState<ColorPalette | null>(null)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  const updateColor = (value: string) => {
+    setColor(value)
+    setError(null)
+  }
+
+  const generate = async () => {
+    if (loading) return
+
+    if (!isValidHex(color)) {
+      setError("Enter a valid HEX color, like #6366F1.")
+      return
+    }
+
+    setLoading(true)
+    setError(null)
+
+    try {
+      const response = await fetch("/api/colors/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ color }),
+      })
+
+      const result: GeneratePaletteResponse = await response.json()
+
+      if (!result.success) {
+        setError(result.error.message)
+        return
+      }
+
+      setPalette(result.data)
+      setOpen(true)
+    } catch {
+      setError("Could not reach the server. Please try again.")
+    } finally {
+      setLoading(false)
+    }
+  }
 
   return (
     <>
@@ -88,7 +132,10 @@ export function ColorInputCard() {
                 id="color"
                 type="text"
                 value={color}
-                onChange={(e) => setColor(e.target.value)}
+                onChange={(e) => updateColor(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") generate()
+                }}
                 placeholder="#6366F1"
                 className="
                   min-w-0
@@ -106,7 +153,9 @@ export function ColorInputCard() {
               {/* Generate */}
               <button
                 type="button"
-                onClick={() => setOpen(true)}
+                onClick={generate}
+                disabled={loading}
+                aria-busy={loading}
                 className="
                   flex h-12
                   shrink-0
@@ -121,16 +170,32 @@ export function ColorInputCard() {
                   transition
                   hover:bg-primary/90
                   active:scale-[0.98]
+                  disabled:pointer-events-none
+                  disabled:opacity-60
                 "
               >
                 <span className="hidden sm:inline">
-                  Generate
+                  {loading ? "Generating" : "Generate"}
                 </span>
 
-                <ArrowRight className="h-4 w-4" />
+                {loading ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <ArrowRight className="h-4 w-4" />
+                )}
               </button>
             </div>
           </div>
+
+          {/* Error */}
+          {error && (
+            <p
+              role="alert"
+              className="mt-3 text-xs font-medium text-destructive"
+            >
+              {error}
+            </p>
+          )}
 
           {/* Helper */}
           <div
@@ -145,7 +210,7 @@ export function ColorInputCard() {
 
             <button
               type="button"
-              onClick={() => setColor("#6366F1")}
+              onClick={() => updateColor("#6366F1")}
               className="
                 font-medium
                 text-foreground
@@ -163,7 +228,7 @@ export function ColorInputCard() {
       <ColorPaletteDialog
         open={open}
         onOpenChange={setOpen}
-        color={color}
+        palette={palette}
       />
     </>
   )
