@@ -31,7 +31,7 @@ export default function Home() {
       </div>
 
       {/* Animated Text Section */}
-      <div className="flex flex-col items-center justify-center   text-5xl md:text-2xl font-extrabold pt-20">
+      <div className="flex flex-col items-center justify-center text-2xl md:text-2xl  pt-20">
         <TextAnimate animation="blurInUp" by="character" duration={5}>
           Color Made by
         </TextAnimate>
