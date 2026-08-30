@@ -31,11 +31,16 @@ export default function Home() {
       </div>
 
       {/* Animated Text Section */}
-      <div className="flex flex-col items-center justify-center   text-5xl md:text-4xl font-extrabold pt-20">
+      <div className="flex flex-col items-center justify-center   text-5xl md:text-2xl font-extrabold pt-20">
         <TextAnimate animation="blurInUp" by="character" duration={5}>
-          Color made simple
+          Color Made by
         </TextAnimate>
       </div>
+
+      {/* brand text */}
+      <div className="flex flex-col items-center justify-center text-5xl font-extrabold pt-5">
+        <h1>H u e g e n</h1>
+        </div>
       {/* Scroll Velocity Section */}
       <div className="flex items-center justify-center pt-40">
         <ScrollVelocityContainer className="text-4xl font-bold md:text-7xl">

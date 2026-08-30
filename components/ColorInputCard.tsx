@@ -2,177 +2,169 @@
 
 import { useState } from "react"
 import { Palette, ArrowRight } from "lucide-react"
+import { ColorPaletteDialog } from "./ColorPaletteDialog"
 
 export function ColorInputCard() {
   const [color, setColor] = useState("#6366F1")
+  const [open, setOpen] = useState(false)
 
   return (
-    <div className="w-full max-w-xl mx-auto px-4">
-      <div
-        className="
-          relative overflow-hidden
-          rounded-[28px]
-          border border-white/30
-          bg-white/[0.08]
-          p-6 sm:p-8
-          shadow-[0_8px_32px_rgba(0,0,0,0.12)]
-          backdrop-blur-[30px]
-          backdrop-saturate-150
-        "
-      >
-        {/* Glass highlight */}
+    <>
+      <div className="w-full max-w-xl mx-auto px-4">
         <div
           className="
-            pointer-events-none
-            absolute inset-x-0 top-0
-            h-px
-            bg-gradient-to-r
-            from-transparent
-            via-white/70
-            to-transparent
-          "
-        />
-
-        <div
-          className="
-            pointer-events-none
-            absolute -top-24 -right-24
-            h-48 w-48
-            rounded-full
-            bg-white/10
-            blur-3xl
-          "
-        />
-
-        {/* Icon */}
-        <div
-          className="
-            relative
-            mb-6
-            flex h-12 w-12
-            items-center justify-center
-            rounded-2xl
-            border border-white/25
-            bg-white/[0.12]
-            shadow-[inset_0_1px_0_rgba(255,255,255,0.25)]
-            backdrop-blur-xl
+            rounded-3xl
+            border border-border
+            bg-card
+            p-6
+            sm:p-8
+            shadow-sm
           "
         >
-          <Palette className="h-6 w-6 text-foreground" />
-        </div>
-
-        {/* Title */}
-        <div className="relative space-y-2">
-          <h2 className="text-2xl font-semibold tracking-tight text-foreground">
-            Find your perfect colors
-          </h2>
-
-          <p className="text-sm leading-6 text-muted-foreground">
-            Enter a color and discover beautiful complementary colors
-            that work perfectly together.
-          </p>
-        </div>
-
-        {/* Color Input */}
-        <div className="relative mt-7">
-          <label
-            htmlFor="color"
-            className="mb-2 block text-sm font-medium text-foreground"
-          >
-            Your color
-          </label>
-
+          {/* Icon */}
           <div
             className="
-              flex items-center gap-3
+              mb-6
+              flex h-12 w-12
+              items-center justify-center
               rounded-2xl
-              border border-white/25
-              bg-black/[0.05]
-              p-2
-              shadow-[inset_0_1px_0_rgba(255,255,255,0.12)]
-              backdrop-blur-xl
-              transition-all
-              focus-within:border-white/40
-              focus-within:bg-white/[0.10]
-              focus-within:shadow-[0_0_0_4px_rgba(255,255,255,0.05)]
+              bg-primary/10
+              text-primary
             "
           >
-            {/* Color preview */}
+            <Palette className="h-6 w-6" />
+          </div>
+
+          {/* Heading */}
+          <div className="space-y-2">
+            <h2 className="text-2xl font-semibold tracking-tight">
+              Find your perfect colors
+            </h2>
+
+            <p className="max-w-md text-sm leading-6 text-muted-foreground">
+              Enter a color and discover beautiful complementary colors
+              that work perfectly together.
+            </p>
+          </div>
+
+          {/* Input */}
+          <div className="mt-7">
+            <label
+              htmlFor="color"
+              className="mb-2 block text-sm font-medium"
+            >
+              Your color
+            </label>
+
             <div
               className="
-                h-12 w-12 shrink-0
-                rounded-xl
-                shadow-[inset_0_1px_2px_rgba(255,255,255,0.3)]
-                ring-1 ring-black/10
-              "
-              style={{ backgroundColor: color }}
-            />
-
-            {/* HEX input */}
-            <input
-              id="color"
-              type="text"
-              value={color}
-              onChange={(e) => setColor(e.target.value)}
-              placeholder="#6366F1"
-              className="
-                min-w-0 flex-1
-                bg-transparent
-                px-2
-                text-sm font-medium uppercase
-                text-foreground
-                outline-none
-                placeholder:text-muted-foreground
-              "
-            />
-
-            {/* Generate */}
-            <button
-              type="button"
-              className="
-                flex h-12 shrink-0
-                items-center gap-2
-                rounded-xl
-                border border-white/20
-                bg-white/20
-                px-4
-                text-sm font-medium
-                text-foreground
-                shadow-[inset_0_1px_0_rgba(255,255,255,0.25)]
-                backdrop-blur-xl
-                transition-all
-                hover:bg-white/30
-                hover:shadow-lg
-                active:scale-[0.98]
+                flex items-center gap-3
+                rounded-2xl
+                border border-input
+                bg-background
+                p-2
+                transition
+                focus-within:border-primary
+                focus-within:ring-2
+                focus-within:ring-primary/10
               "
             >
-              <span className="hidden sm:inline">
-                Generate
-              </span>
+              {/* Color preview */}
+              <div
+                className="
+                  h-12 w-12
+                  shrink-0
+                  rounded-xl
+                  shadow-sm
+                  ring-1 ring-black/10
+                "
+                style={{
+                  backgroundColor: color,
+                }}
+              />
 
-              <ArrowRight className="h-4 w-4" />
+              {/* HEX */}
+              <input
+                id="color"
+                type="text"
+                value={color}
+                onChange={(e) => setColor(e.target.value)}
+                placeholder="#6366F1"
+                className="
+                  min-w-0
+                  flex-1
+                  bg-transparent
+                  px-2
+                  text-sm
+                  font-medium
+                  uppercase
+                  outline-none
+                  placeholder:text-muted-foreground
+                "
+              />
+
+              {/* Generate */}
+              <button
+                type="button"
+                onClick={() => setOpen(true)}
+                className="
+                  flex h-12
+                  shrink-0
+                  items-center gap-2
+                  rounded-xl
+                  bg-primary
+                  px-4
+                  text-sm
+                  font-medium
+                  text-primary-foreground
+                  shadow-sm
+                  transition
+                  hover:bg-primary/90
+                  active:scale-[0.98]
+                "
+              >
+                <span className="hidden sm:inline">
+                  Generate
+                </span>
+
+                <ArrowRight className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
+
+          {/* Helper */}
+          <div
+            className="
+              mt-4
+              flex items-center justify-between
+              text-xs
+              text-muted-foreground
+            "
+          >
+            <span>Enter a HEX color</span>
+
+            <button
+              type="button"
+              onClick={() => setColor("#6366F1")}
+              className="
+                font-medium
+                text-foreground
+                transition
+                hover:text-primary
+              "
+            >
+              Try an example
             </button>
           </div>
         </div>
-
-        {/* Example */}
-        <div className="relative mt-4 flex items-center justify-between text-xs text-muted-foreground">
-          <span>Enter a HEX color</span>
-
-          <button
-            type="button"
-            onClick={() => setColor("#6366F1")}
-            className="
-              font-medium
-              text-foreground/70
-              transition
-              hover:text-foreground
-            "
-          >
-            Try an example
-          </button>
-        </div>
       </div>
-    </div>
+
+      {/* Dialog */}
+      <ColorPaletteDialog
+        open={open}
+        onOpenChange={setOpen}
+        color={color}
+      />
+    </>
   )
 }
